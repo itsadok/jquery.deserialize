@@ -32,9 +32,25 @@
       <input type="text" id="user_firstname" name="user[firstname]"/>
       <label for="user[lastname]">Last name</label>
       <input type="text" id="user_lastname" name="user[lastname]"/>
+      <label for="user[is_admin]">Is admin:<label>
+      <input type="checkbox" id="user_is_admin" name="user[is_admin]" val="1"/>
+    </fieldset>
+    <fieldset>
+      <label>System 1: <input type="radio" name="system" value="1"/></label>
+      <label>System 2: <input type="radio" name="system" value="2" checked/></label>
+    </fieldset>
+    <fieldset>
+        <label>
+            Color: 
+            <select name="color">
+                <option value="red">Red</option>
+                <option value="green" selected>Green</option>
+                <option value="blue">Blue</option>
+            </select>
+        </label>
     </fieldset>
   </form>
-  <a id="populateBtn1" href="#login=john.doe&amp;password=secret&amp;user[firstname]=John&amp;user[lastname]=Doe">Populate from a hash.</a>
+  <a id="populateBtn1" href="#login=john.doe&amp;password=secret&amp;user[firstname]=John&amp;user[lastname]=Doe&amp;user[is_admin]=1&amp;system=1&amp;color=blue">Populate from a hash.</a>
   <a href="demo.html?reload#login=john.doe2&amp;password=secret2&amp;user%5Bfirstname%5D%3DJohn2&amp;user%5Blastname%5D%3DDoe2">Populate after reload.</a>
 </body>
 </html>

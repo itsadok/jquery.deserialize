@@ -8,9 +8,15 @@
  *
 **/
 $.fn.deserialize = function(s) {
-  var data = s.split("&");
-  for (var i = 0; i < data.length; i++) {
-    var pair = decodeURIComponent(data[i]).split("=");
-    $("[name='" + pair[0] + "']", this).val(pair[1]);
+  var data = {};
+  var parts = s.split("&");
+  for (var i = 0; i < parts.length; i++) {
+    var pair = decodeURIComponent(parts[i]).split("=");
+    data[pair[0]] = pair[1];
+    $("[type!=radio][name='" + pair[0] + "']", this).val(pair[1]);
+    $("[type=radio][name='" + pair[0] + "'][value='" + pair[1] + "']", this).attr("checked", true);
   }
+  $("input[type=checkbox]", this).each(function() {
+    $(this).attr("checked", $(this).attr("name") in data);
+  });
 };
