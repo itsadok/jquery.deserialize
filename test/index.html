@@ -1,0 +1,121 @@
+<!DOCTYPE HTML >
+<html>
+<head>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="qunit.css" type="text/css" media="screen"/>
+    <script type="text/javascript" src="qunit.js"></script>
+    <script type="text/javascript" src="../src/jquery.deserialize.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var test_input = "login=john.doe&password=secret&user[firstname]=John&user[lastname]=Doe&user[is_admin]=on&system=1&color=blue";
+            var test_func = function(form, field, result, mock_input, description) {
+                return function() {
+                    $("#" + form).deserialize(mock_input || "");
+                    equal($("#" + field).val(), result, description || "Tested.");
+                }
+            };
+            var test_func2 = function(field, result, description) {
+                return function() {
+                    equal($("#" + field).val(), result, description || "Tested.");
+                }
+            };
+
+            module("0. All in one go, initial values");
+            test("test A", 1, test_func2("login", "", "login"));
+            test("test B", 1, test_func2("password", "",  "password"));
+            test("test C", 1, test_func2("user_firstname", "",  "user_firstname"));
+            test("test D", 1, test_func2("user_lastname", "",  "user_lastname"));
+            test("test E", 1, test_func2("color", "green",  "color (drop down)"));
+            test("test F", 1, function() {
+                equal($("input[name=system]:checked").val(), "2", "system (radio)");
+            });
+            test("test G", 1, function() {
+                equal($("#user_is_admin").is(":checked"), false, "user_is_admin (checkbox)");
+            });
+
+            module("1. One at a time");
+            test("test A", 1, test_func("demo1", "login", "john.doe", test_input, "login"));
+            test("test B", 1, test_func("demo1", "password", "secret", test_input, "password"));
+            test("test C", 1, test_func("demo1", "user_firstname", "John", test_input, "user_firstname"));
+            test("test D", 1, test_func("demo1", "user_lastname", "Doe", test_input, "user_lastname"));
+            test("test E", 1, test_func("demo1", "color", "blue", test_input, "color (drop down)"));
+
+            test("test F", 1, function() {
+                $("#demo1").deserialize(test_input || "");
+                equal($("input[name=system]:checked").val(), "1", "system (radio)");
+            });
+            test("test G", 1, function() {
+                            $("#demo1").deserialize(test_input || "");
+                            equal($("#user_is_admin").is(":checked"), true, "user_is_admin (checkbox)");
+            });
+
+            module("2. All in one go");
+            test("All in one go", 7, function() {
+                $("#demo1").deserialize(test_input);
+                equal($("#login").val(), "john.doe", "login");
+                equal($("#password").val(), "secret", "password");
+                equal($("#user_firstname").val(), "John", "user_firstname");
+                equal($("#user_lastname").val(), "Doe", "user_lastname");
+                equal($("#color").val(), "blue", "color (drop down)");
+
+                equal($("input[name=system]:checked").val(), "1", "system (radio)")
+                equal($("#user_is_admin").is(":checked"), true, "user_is_admin (checkbox)")
+
+            });
+
+            // Tests to run:
+            // 1.text area.
+            // 2.Hidden.
+            // 3.multiple select.
+            // 4.Opt' group.
+            // Html 5 other inputs.
+
+        });
+    </script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit example</h1>
+
+<h2 id="qunit-banner"></h2>
+
+<div id="qunit-testrunner-toolbar"></div>
+<h2 id="qunit-userAgent"></h2>
+<ol id="qunit-tests"></ol>
+<div id="qunit-fixture">
+    <form id="demo1" action="">
+        <fieldset>
+            <label for="login">Login</label>
+            <input type="text" id="login" name="login"/>
+            <label for="password">Pass</label>
+            <input type="password" id="password" name="password"/>
+        </fieldset>
+        <fieldset>
+            <label for="user_firstname">First name</label>
+            <input type="text" id="user_firstname" name="user[firstname]"/>
+            <label for="user_lastname">Last name</label>
+            <input type="text" id="user_lastname" name="user[lastname]"/>
+            <label for="user_is_admin">Is admin:</label>
+            <input type="checkbox" id="user_is_admin" name="user[is_admin]"/>
+        </fieldset>
+        <fieldset>
+            <label>System 1: <input type="radio" name="system" value="1"/></label>
+            <label>System 2: <input type="radio" name="system" value="2" checked/></label>
+        </fieldset>
+        <fieldset>
+            <label>
+                Color:
+                <select name="color" id="color">
+                    <option value="red">Red</option>
+                    <option value="green" selected>Green</option>
+                    <option value="blue">Blue</option>
+                </select>
+            </label>
+        </fieldset>
+    </form>
+</div>
+
+
+</body>
+</html>
