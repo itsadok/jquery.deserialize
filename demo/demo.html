@@ -3,8 +3,8 @@
 <head>
   <title>jQuery deserialize plugin demo</title>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
-  <script type="text/javascript" src="jquery.deserialize.js"></script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+  <script type="text/javascript" src="../src/jquery.deserialize.js"></script>
   <script type="text/javascript">
     $(function() {
       if (window.location.hash.length > 0) {
@@ -50,7 +50,7 @@
         </label>
     </fieldset>
   </form>
-  <a id="populateBtn1" href="#login=john.doe&amp;password=secret&amp;user[firstname]=John&amp;user[lastname]=Doe&amp;user[is_admin]=1&amp;system=1&amp;color=blue">Populate from a hash.</a>
+  <a id="populateBtn1" href="demo.html#login=john.doe&amp;password=secret&amp;user[firstname]=John&amp;user[lastname]=Doe&amp;user[is_admin]=1&amp;system=1&amp;color=blue">Populate from a hash.</a>
   <a href="demo.html?reload#login=john.doe2&amp;password=secret2&amp;user%5Bfirstname%5D%3DJohn2&amp;user%5Blastname%5D%3DDoe2">Populate after reload.</a>
 </body>
 </html>
