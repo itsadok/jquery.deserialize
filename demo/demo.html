@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <title>jQuery deserialize plugin demo</title>
@@ -7,41 +7,40 @@
   <script type="text/javascript" src="../src/jquery.deserialize.js"></script>
   <script type="text/javascript">
     $(function() {
-      if (window.location.hash.length > 0) {
-        $("#demo_form").deserialize(window.location.hash.substring(1));
+      if (/\?/.test(window.location.href)) {
+         $("#demo_form").deserialize(window.location.href.split("?")[1]);
       }
       
-      $("#populateBtn1").click(function(e) {
-        e.preventDefault();
-        console.log(this.href.substring(1))
+      $("#populateBtn1").click(function() {
         $("#demo_form").deserialize(this.href.split('#')[1]);
+        return false;
       });
     });
   </script>
 </head>
 <body>
-  <form id="demo_form" action="">
-    <fieldset>      
-      <label for="login">Login</label>
-      <input type="text" id="login" name="login"/>
-      <label for="password"></label>
-      <input type="password" id="password" name="password"/>
+<form id="demo_form" action="">
+    <fieldset>
+        <label for="login">Login</label>
+        <input type="text" id="login" name="login"/>
+        <label for="password">Pass</label>
+        <input type="password" id="password" name="password"/>
     </fieldset>
     <fieldset>
-      <label for="user[firstname]">First name</label>
-      <input type="text" id="user_firstname" name="user[firstname]"/>
-      <label for="user[lastname]">Last name</label>
-      <input type="text" id="user_lastname" name="user[lastname]"/>
-      <label for="user[is_admin]">Is admin:<label>
-      <input type="checkbox" id="user_is_admin" name="user[is_admin]" val="1"/>
+        <label for="user_firstname">First name</label>
+        <input type="text" id="user_firstname" name="user[firstname]"/>
+        <label for="user_lastname">Last name</label>
+        <input type="text" id="user_lastname" name="user[lastname]"/>
+        <label for="user_is_admin">Is admin:</label>
+        <input type="checkbox" id="user_is_admin" name="user[is_admin]"/>
     </fieldset>
     <fieldset>
-      <label>System 1: <input type="radio" name="system" value="1"/></label>
-      <label>System 2: <input type="radio" name="system" value="2" checked/></label>
+        <label>System 1: <input type="radio" name="system" value="1"/></label>
+        <label>System 2: <input type="radio" name="system" value="2" checked/></label>
     </fieldset>
     <fieldset>
         <label>
-            Color: 
+            Color:
             <select name="color">
                 <option value="red">Red</option>
                 <option value="green" selected>Green</option>
@@ -49,8 +48,9 @@
             </select>
         </label>
     </fieldset>
-  </form>
-  <a id="populateBtn1" href="demo.html#login=john.doe&amp;password=secret&amp;user[firstname]=John&amp;user[lastname]=Doe&amp;user[is_admin]=1&amp;system=1&amp;color=blue">Populate from a hash.</a>
-  <a href="demo.html?reload#login=john.doe2&amp;password=secret2&amp;user%5Bfirstname%5D%3DJohn2&amp;user%5Blastname%5D%3DDoe2">Populate after reload.</a>
+    <input type="submit">
+</form>
+  <a id="populateBtn1" href="demo.html#login=john.doe&amp;password=secret&amp;user[firstname]=John&amp;user[lastname]=Doe&amp;user[is_admin]=on&amp;system=1&amp;color=blue">Populate from a hash.</a>
+  <a href="demo.html?login=john.doe2&amp;password=secret2&amp;user%5Bfirstname%5D%3DJohn2&amp;user%5Blastname%5D%3DDoe2">Populate after reload.</a>
 </body>
 </html>
