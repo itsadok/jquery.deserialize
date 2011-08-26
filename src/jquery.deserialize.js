@@ -18,7 +18,10 @@
         $("[type=radio][name='" + pair[0] + "'][value='" + pair[1] + "']", this).attr("checked", true);
       }
       $("input[type=checkbox]", this).each(function() {
-        $(this).attr("checked", $(this).attr("name") in data);
+        var oldState = !!$(this).attr("checked")
+        var newState = ($(this).attr("name") in data)
+        $(this).attr("checked", newState);
+        if(oldState != newState) $(this).trigger('change')
       });
     };
 })(jQuery);

@@ -22,7 +22,7 @@
             };
 
             module("0. All in one go, initial values");
-            test("test A", 1, test_func2("login", "", "login"));
+            test("test A", 1, test_func2("login", "", "login")); // if this test fails, shift-reload the page
             test("test B", 1, test_func2("password", "",  "password"));
             test("test C", 1, test_func2("user_firstname", "",  "user_firstname"));
             test("test D", 1, test_func2("user_lastname", "",  "user_lastname"));
@@ -48,6 +48,25 @@
             test("test G", 1, function() {
                             $("#demo1").deserialize(test_input || "");
                             equal($("#user_is_admin").is(":checked"), true, "user_is_admin (checkbox)");
+            });
+
+            test("it triggers a 'change' on checkboxes", 1, function() {
+                var triggered = 0
+                $("#user_is_admin").change(function(){
+                  triggered += 1
+                })
+                $("#demo1").deserialize('user[is_admin]=1');
+                equal(triggered, 1);
+            });
+
+            test("does not trigger a 'change' on checkboxes if checked does not change", 1, function() {
+                var triggered = 0
+                $("#user_is_admin").attr('checked', true)
+                $("#user_is_admin").change(function(){
+                  triggered += 1
+                })
+                $("#demo1").deserialize('user[is_admin]=1');
+                equal(triggered, 0);
             });
 
             module("2. All in one go");
