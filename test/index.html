@@ -7,17 +7,17 @@
     <script type="text/javascript" src="../src/jquery.deserialize.js"></script>
 
     <script type="text/javascript">
-        $(document).ready(function() {
+        $(function(){
             var test_input = "login=john.doe&password=secret&user[firstname]=John&user[lastname]=Doe&user[is_admin]=on&system=1&color=blue";
-            var test_func = function(form, field, result, mock_input, description) {
+            var testValueIsDeserialized = function(form, mock_input, field, result) {
                 return function() {
-                    $("#" + form).deserialize(mock_input || "");
-                    equal($("#" + field).val(), result, description || "Tested.");
+                    $(form).deserialize(mock_input || "");
+                    equal($( field).val(), result);
                 }
             };
-            var test_func2 = function(field, result, description) {
+            var testValueIsSet = function(field, result) {
                 return function() {
-                    equal($("#" + field).val(), result, description || "Tested.");
+                    equal($(field).val(), result);
                 }
             };
 
@@ -28,66 +28,60 @@
               equal(triggered, triggered ? 1 : 0);
             }
 
-            module("0. All in one go, initial values");
-            test("test A", 1, test_func2("login", "", "login")); // if this test fails, shift-reload the page
-            test("test B", 1, test_func2("password", "",  "password"));
-            test("test C", 1, test_func2("user_firstname", "",  "user_firstname"));
-            test("test D", 1, test_func2("user_lastname", "",  "user_lastname"));
-            test("test E", 1, test_func2("color", "green",  "color (drop down)"));
-            test("test F", 1, function() {
-                equal($("input[name=system]:checked").val(), "2", "system (radio)");
+            module("Initial values are set");
+            test("login (text)", 1, testValueIsSet("#login", "")); // if this test fails, shift-reload the page
+            test("password (password)", 1, testValueIsSet("#password", ""));
+            test("user_firstname (text)", 1, testValueIsSet("#user_firstname", ""));
+            test("user_lastname (text)", 1, testValueIsSet("#user_lastname", ""));
+            test("color dropdown (select)", 1, testValueIsSet("#color", "green"));
+            test("system (radio)", 1, function() {
+              equal($("input[name=system]:checked").val(), "2");
             });
-            test("test G", 1, function() {
-                equal($("#user_is_admin").is(":checked"), false, "user_is_admin (checkbox)");
-            });
-
-            module("1. One at a time");
-            test("test A", 1, test_func("demo1", "login", "john.doe", test_input, "login"));
-            test("test B", 1, test_func("demo1", "password", "secret", test_input, "password"));
-            test("test C", 1, test_func("demo1", "user_firstname", "John", test_input, "user_firstname"));
-            test("test D", 1, test_func("demo1", "user_lastname", "Doe", test_input, "user_lastname"));
-            test("test E", 1, test_func("demo1", "color", "blue", test_input, "color (drop down)"));
-
-            test("test F", 1, function() {
-                $("#demo1").deserialize(test_input || "");
-                equal($("input[name=system]:checked").val(), "1", "system (radio)");
-            });
-            test("test G", 1, function() {
-                            $("#demo1").deserialize(test_input || "");
-                            equal($("#user_is_admin").is(":checked"), true, "user_is_admin (checkbox)");
+            test("user[is_admin] (checkbox)", 1, function() {
+              equal($("#user_is_admin").is(":checked"), false);
             });
 
+            module("Fields are filled");
+            test("text-field is filled", 1, testValueIsDeserialized("#demo1", test_input, "#login", "john.doe"));
+            test("password-field is filled", 1, testValueIsDeserialized("#demo1", test_input, "#password", "secret"));
+            test("nested text-field is filled", 1, testValueIsDeserialized("#demo1", test_input, "#user_firstname", "John"));
+            test("nested text-field is filled", 1, testValueIsDeserialized("#demo1", test_input, "#user_lastname", "Doe"));
+            test("select is filled", 1, testValueIsDeserialized("#demo1", test_input, "#color", "blue"));
+            test("radio is filled", 1, function() {
+              $("#demo1").deserialize(test_input);
+              equal($("input[name=system]:checked").val(), "1", "system (radio)");
+            });
+            test("checkbox is filled", 1, function() {
+              $("#demo1").deserialize(test_input);
+              equal($("#user_is_admin").is(":checked"), true, "user_is_admin (checkbox)");
+            });
+
+            module("Fields trigger change event");
             test("it triggers a 'change' on normal fields", 1, function() {
               testChangeTriggered($('#user_lastname'), 'user[lastname]=1', true)
             });
-
             test("it does not triggers a 'change' on unchanged normal fields", 1, function() {
               $("#user_lastname").val('1')
               testChangeTriggered($('#user_lastname'), 'user[lastname]=1', false)
             });
-
             test("it triggers a 'change' on radio fields", 1, function() {
               testChangeTriggered($('#system_1'), 'system=1', true)
             });
-
             test("it does not triggers a 'change' on unchanged radio fields", 1, function() {
               testChangeTriggered($('#system_2'), 'system=2', false)
             });
-
             test("it does not triggers a 'change' on unaffected radio fields", 1, function() {
               testChangeTriggered($('#system_2'), 'system=1', false)
             });
-
             test("it triggers a 'change' on checkboxes", 1, function() {
               testChangeTriggered($('#user_is_admin'), 'user[is_admin]=1', true)
             });
-
             test("does not trigger a 'change' on checkboxes if checked does not change", 1, function() {
               $("#user_is_admin").attr('checked', true)
               testChangeTriggered($('#user_is_admin'), 'user[is_admin]=1', false)
             });
 
-            module("2. All in one go");
+            module("All in one go");
             test("All in one go", 7, function() {
                 $("#demo1").deserialize(test_input);
                 equal($("#login").val(), "john.doe", "login");
@@ -98,16 +92,14 @@
 
                 equal($("input[name=system]:checked").val(), "1", "system (radio)")
                 equal($("#user_is_admin").is(":checked"), true, "user_is_admin (checkbox)")
-
             });
 
-            // Tests to run:
+            // Missing tests:
             // 1.text area.
             // 2.Hidden.
             // 3.multiple select.
             // 4.Opt' group.
             // Html 5 other inputs.
-
         });
     </script>
 
