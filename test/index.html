@@ -69,6 +69,33 @@
                 equal(triggered, 0);
             });
 
+            test("it triggers a 'change' on radio fields", 1, function() {
+                var triggered = 0
+                $("#system_1").change(function(){
+                  triggered += 1
+                })
+                $("#demo1").deserialize('system=1');
+                equal(triggered, 1);
+            });
+
+            test("it does not triggers a 'change' on unchanged radio fields", 1, function() {
+                var triggered = 0
+                $("#system_2").change(function(){
+                  triggered += 1
+                })
+                $("#demo1").deserialize('system=2');
+                equal(triggered, 0);
+            });
+
+            test("it does not triggers a 'change' on unaffected radio fields", 1, function() {
+                var triggered = 0
+                $("#system_2").change(function(){
+                  triggered += 1
+                })
+                $("#demo1").deserialize('system=1');
+                equal(triggered, 0);
+            });
+
             test("it triggers a 'change' on checkboxes", 1, function() {
                 var triggered = 0
                 $("#user_is_admin").change(function(){
@@ -138,8 +165,8 @@
             <input type="checkbox" id="user_is_admin" name="user[is_admin]"/>
         </fieldset>
         <fieldset>
-            <label>System 1: <input type="radio" name="system" value="1"/></label>
-            <label>System 2: <input type="radio" name="system" value="2" checked/></label>
+            <label>System 1: <input id="system_1" type="radio" name="system" value="1"/></label>
+            <label>System 2: <input id="system_2" type="radio" name="system" value="2" checked/></label>
         </fieldset>
         <fieldset>
             <label>
