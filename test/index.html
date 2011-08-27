@@ -21,11 +21,11 @@
                 }
             };
 
-            function testChangeTriggered($input, values, triggered){
-              var triggered = 0
-              $input.change(function(){ triggered += 1 })
-              $($input[0].form).deserialize(values);
-              equal(triggered, triggered ? 1 : 0);
+            function testChangeTriggered($input, values, triggered, options){
+              var times = 0
+              $input.change(function(){ times += 1 })
+              $($input[0].form).deserialize(values, options);
+              equal(times, triggered ? 1 : 0);
             }
 
             module("Initial values are set");
@@ -61,8 +61,11 @@
               testChangeTriggered($('#user_lastname'), 'user[lastname]=1', true)
             });
             test("it does not triggers a 'change' on unchanged normal fields", 1, function() {
-              $("#user_lastname").val('1')
-              testChangeTriggered($('#user_lastname'), 'user[lastname]=1', false)
+              $("#user_lastname").val('2')
+              testChangeTriggered($('#user_lastname'), 'user[lastname]=2', false)
+            });
+            test("it does not triggers a 'change' on normal fields with noEvents option", 1, function() {
+              testChangeTriggered($('#user_lastname'), 'user[lastname]=3', false, {noEvents: true})
             });
             test("it triggers a 'change' on radio fields", 1, function() {
               testChangeTriggered($('#system_1'), 'system=1', true)
@@ -80,6 +83,8 @@
               $("#user_is_admin").attr('checked', true)
               testChangeTriggered($('#user_is_admin'), 'user[is_admin]=1', false)
             });
+
+
 
             module("All in one go");
             test("All in one go", 7, function() {
@@ -144,7 +149,6 @@
         </fieldset>
     </form>
 </div>
-
 
 </body>
 </html>

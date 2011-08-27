@@ -6,15 +6,23 @@
  * Usage
  * $("form").deserialize(string);
  *
+ * do not trigger change events on elements
+ * $("form").deserialize(string, {noEvents: true});
 **/
 (function($) {
-    $.fn.deserialize = function(s) {
+    $.fn.deserialize = function(s, options) {
+      function trigger(element,event){
+        if(options.noEvents)return
+        element.trigger(event)
+      }
+
       function changeChecked($input, newState){
         var oldState = $input.is(":checked")
         $input.attr("checked", newState);
-        if(oldState != newState) $input.trigger('change')
+        if(oldState != newState) trigger($input, 'change')
       }
 
+      options = options || {}
       var data = {};
       var parts = s.split("&");
       for (var i = 0; i < parts.length; i++) {
@@ -32,7 +40,7 @@
           var oldVal = $input.val()
           var newVal = pair[1]
           $input.val(newVal);
-          if(oldVal != newVal)$input.trigger('change')
+          if(oldVal != newVal)trigger($input, 'change')
         }
       }
 
