@@ -14,8 +14,19 @@
       for (var i = 0; i < parts.length; i++) {
         var pair = decodeURIComponent(parts[i]).split("=");
         data[pair[0]] = pair[1];
-        $("[type!=radio][name='" + pair[0] + "']", this).val(pair[1]);
-        $("[type=radio][name='" + pair[0] + "'][value='" + pair[1] + "']", this).attr("checked", true);
+
+        var $input = $("[name='" + pair[0] + "']", this)
+        var type = $input.attr('type')
+
+        if(type == 'radio'){
+          $input.filter("[value='" + pair[1] + "']").attr("checked", true);
+        } else if(type == 'checkbox') {
+        } else {
+          var oldVal = $input.val()
+          var newVal = pair[1]
+          $input.val(newVal);
+          if(oldVal != newVal)$input.trigger('change')
+        }
       }
 
       // checkboxes are not serialized -> missing means unchecked

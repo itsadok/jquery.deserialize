@@ -50,6 +50,25 @@
                             equal($("#user_is_admin").is(":checked"), true, "user_is_admin (checkbox)");
             });
 
+            test("it triggers a 'change' on normal fields", 1, function() {
+                var triggered = 0
+                $("#user_lastname").change(function(){
+                  triggered += 1
+                })
+                $("#demo1").deserialize('user[lastname]=1');
+                equal(triggered, 1);
+            });
+
+            test("it does not triggers a 'change' on unchanged normal fields", 1, function() {
+                var triggered = 0
+                $("#user_lastname").val('xxx')
+                $("#user_lastname").change(function(){
+                  triggered += 1
+                })
+                $("#demo1").deserialize('user[lastname]=xxx');
+                equal(triggered, 0);
+            });
+
             test("it triggers a 'change' on checkboxes", 1, function() {
                 var triggered = 0
                 $("#user_is_admin").change(function(){
