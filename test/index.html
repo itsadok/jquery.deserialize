@@ -21,6 +21,13 @@
                 }
             };
 
+            function testChangeTriggered($input, values, triggered){
+              var triggered = 0
+              $input.change(function(){ triggered += 1 })
+              $($input[0].form).deserialize(values);
+              equal(triggered, triggered ? 1 : 0);
+            }
+
             module("0. All in one go, initial values");
             test("test A", 1, test_func2("login", "", "login")); // if this test fails, shift-reload the page
             test("test B", 1, test_func2("password", "",  "password"));
@@ -51,68 +58,33 @@
             });
 
             test("it triggers a 'change' on normal fields", 1, function() {
-                var triggered = 0
-                $("#user_lastname").change(function(){
-                  triggered += 1
-                })
-                $("#demo1").deserialize('user[lastname]=1');
-                equal(triggered, 1);
+              testChangeTriggered($('#user_lastname'), 'user[lastname]=1', true)
             });
 
             test("it does not triggers a 'change' on unchanged normal fields", 1, function() {
-                var triggered = 0
-                $("#user_lastname").val('xxx')
-                $("#user_lastname").change(function(){
-                  triggered += 1
-                })
-                $("#demo1").deserialize('user[lastname]=xxx');
-                equal(triggered, 0);
+              $("#user_lastname").val('1')
+              testChangeTriggered($('#user_lastname'), 'user[lastname]=1', false)
             });
 
             test("it triggers a 'change' on radio fields", 1, function() {
-                var triggered = 0
-                $("#system_1").change(function(){
-                  triggered += 1
-                })
-                $("#demo1").deserialize('system=1');
-                equal(triggered, 1);
+              testChangeTriggered($('#system_1'), 'system=1', true)
             });
 
             test("it does not triggers a 'change' on unchanged radio fields", 1, function() {
-                var triggered = 0
-                $("#system_2").change(function(){
-                  triggered += 1
-                })
-                $("#demo1").deserialize('system=2');
-                equal(triggered, 0);
+              testChangeTriggered($('#system_2'), 'system=2', false)
             });
 
             test("it does not triggers a 'change' on unaffected radio fields", 1, function() {
-                var triggered = 0
-                $("#system_2").change(function(){
-                  triggered += 1
-                })
-                $("#demo1").deserialize('system=1');
-                equal(triggered, 0);
+              testChangeTriggered($('#system_2'), 'system=1', false)
             });
 
             test("it triggers a 'change' on checkboxes", 1, function() {
-                var triggered = 0
-                $("#user_is_admin").change(function(){
-                  triggered += 1
-                })
-                $("#demo1").deserialize('user[is_admin]=1');
-                equal(triggered, 1);
+              testChangeTriggered($('#user_is_admin'), 'user[is_admin]=1', true)
             });
 
             test("does not trigger a 'change' on checkboxes if checked does not change", 1, function() {
-                var triggered = 0
-                $("#user_is_admin").attr('checked', true)
-                $("#user_is_admin").change(function(){
-                  triggered += 1
-                })
-                $("#demo1").deserialize('user[is_admin]=1');
-                equal(triggered, 0);
+              $("#user_is_admin").attr('checked', true)
+              testChangeTriggered($('#user_is_admin'), 'user[is_admin]=1', false)
             });
 
             module("2. All in one go");
