@@ -10,26 +10,27 @@
         $(function(){
             var test_input = "login=john.doe&password=secret&user[firstname]=John&user[lastname]=Doe&user[is_admin]=on&system=1&color=blue";
             var testValueIsDeserialized = function(form, mock_input, field, result) {
-                return function() {
-                    $(form).deserialize(mock_input || "");
-                    equal($( field).val(), result);
-                }
+              return function(){
+                $(form).deserialize(mock_input || "");
+                equal($( field).val(), result);
+              }
             };
             var testValueIsSet = function(field, result) {
-                return function() {
-                    equal($(field).val(), result);
-                }
+              return function(){
+                equal($(field).val(), result);
+              }
             };
 
-            function testChangeTriggered($input, values, triggered){
-              var triggered = 0
-              $input.change(function(){ triggered += 1 })
-              $($input[0].form).deserialize(values);
-              equal(triggered, triggered ? 1 : 0);
+            function testChangeTriggered($input, values, triggered, options){
+              var times = 0
+              $input.change(function(){ times += 1 })
+              $($input[0].form).deserialize(values, options);
+              equal(times, triggered ? 1 : 0);
             }
 
-            module("Initial values are set");
-            test("login (text)", 1, testValueIsSet("#login", "")); // if this test fails, shift-reload the page
+            // if one of these tests fails, shift-reload the page
+            // TODO reset forms before every test
+            test("login (text)", 1, testValueIsSet("#login", ""));
             test("password (password)", 1, testValueIsSet("#password", ""));
             test("user_firstname (text)", 1, testValueIsSet("#user_firstname", ""));
             test("user_lastname (text)", 1, testValueIsSet("#user_lastname", ""));
@@ -40,6 +41,7 @@
             test("user[is_admin] (checkbox)", 1, function() {
               equal($("#user_is_admin").is(":checked"), false);
             });
+
 
             module("Fields are filled");
             test("text-field is filled", 1, testValueIsDeserialized("#demo1", test_input, "#login", "john.doe"));
@@ -56,13 +58,17 @@
               equal($("#user_is_admin").is(":checked"), true, "user_is_admin (checkbox)");
             });
 
+
             module("Fields trigger change event");
             test("it triggers a 'change' on normal fields", 1, function() {
               testChangeTriggered($('#user_lastname'), 'user[lastname]=1', true)
             });
             test("it does not triggers a 'change' on unchanged normal fields", 1, function() {
-              $("#user_lastname").val('1')
-              testChangeTriggered($('#user_lastname'), 'user[lastname]=1', false)
+              $("#user_lastname").val('2')
+              testChangeTriggered($('#user_lastname'), 'user[lastname]=2', false)
+            });
+            test("it does not triggers a 'change' on normal fields with noEvents option", 1, function() {
+              testChangeTriggered($('#user_lastname'), 'user[lastname]=3', false, {noEvents: true})
             });
             test("it triggers a 'change' on radio fields", 1, function() {
               testChangeTriggered($('#system_1'), 'system=1', true)
@@ -80,6 +86,7 @@
               $("#user_is_admin").attr('checked', true)
               testChangeTriggered($('#user_is_admin'), 'user[is_admin]=1', false)
             });
+
 
             module("All in one go");
             test("All in one go", 7, function() {
@@ -144,7 +151,6 @@
         </fieldset>
     </form>
 </div>
-
 
 </body>
 </html>
