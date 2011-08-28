@@ -7,5 +7,8 @@ In contrary to some other plugins available it doesn't reinvent the wheel (by ut
     // string = "foo=1&bar=2"
     $("#form-id").deserialize(string);
 
+    // do not trigger change events
+    $("#form-id").deserialize(string, {noEvents: true});
+
 # Demo
 For examples please see demo.html
