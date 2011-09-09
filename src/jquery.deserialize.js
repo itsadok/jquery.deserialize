@@ -26,7 +26,7 @@
       var data = {};
       var parts = s.split("&");
       for (var i = 0; i < parts.length; i++) {
-        var pair = decodeURIComponent(parts[i]).split("=");
+        var pair = decodeURIComponent(parts[i].replace(/\+/g,'%20')).split("=");
         data[pair[0]] = pair[1];
 
         var $input = $("[name='" + pair[0] + "']", this)

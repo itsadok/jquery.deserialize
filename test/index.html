@@ -57,6 +57,7 @@
               $("#demo1").deserialize(test_input);
               equal($("#user_is_admin").is(":checked"), true, "user_is_admin (checkbox)");
             });
+            test("field is filled with +", 1, testValueIsDeserialized("#demo1", 'login=plus+_+and%20_%20spaceand%2B_%2Bplus', "#login", "plus _ and _ spaceand+_+plus"));
 
 
             module("Fields trigger change event");
