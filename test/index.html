@@ -8,7 +8,7 @@
 
     <script type="text/javascript">
         $(function(){
-            var test_input = "login=john.doe&password=secret&user[firstname]=John&user[lastname]=Doe&user[is_admin]=on&system=1&color=blue";
+            var test_input = "login=john.doe&password=secret%3D&user[firstname]=John&user[lastname]=Doe&user[is_admin]=on&system=1&color=blue";
             var testValueIsDeserialized = function(form, mock_input, field, result) {
               return function(){
                 $(form).deserialize(mock_input || "");
@@ -45,7 +45,7 @@
 
             module("Fields are filled");
             test("text-field is filled", 1, testValueIsDeserialized("#demo1", test_input, "#login", "john.doe"));
-            test("password-field is filled", 1, testValueIsDeserialized("#demo1", test_input, "#password", "secret"));
+            test("password-field is filled", 1, testValueIsDeserialized("#demo1", test_input, "#password", "secret="));
             test("nested text-field is filled", 1, testValueIsDeserialized("#demo1", test_input, "#user_firstname", "John"));
             test("nested text-field is filled", 1, testValueIsDeserialized("#demo1", test_input, "#user_lastname", "Doe"));
             test("select is filled", 1, testValueIsDeserialized("#demo1", test_input, "#color", "blue"));
@@ -93,7 +93,7 @@
             test("All in one go", 7, function() {
                 $("#demo1").deserialize(test_input);
                 equal($("#login").val(), "john.doe", "login");
-                equal($("#password").val(), "secret", "password");
+                equal($("#password").val(), "secret=", "password");
                 equal($("#user_firstname").val(), "John", "user_firstname");
                 equal($("#user_lastname").val(), "Doe", "user_lastname");
                 equal($("#color").val(), "blue", "color (drop down)");
