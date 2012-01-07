@@ -8,48 +8,70 @@
  *
  * do not trigger change events on elements
  * $("form").deserialize(string, {noEvents: true});
+ *
+ * expect checkboxes to be serialized as boolean (true/false) rather than standard (present/missing)
+ * $("form").deserialize(string, {checkboxesAsBools: true});
 **/
 (function($) {
     $.fn.deserialize = function(s, options) {
-      function trigger(element,event){
-        if(options.noEvents)return
-        element.trigger(event)
+      function optionallyTrigger(element,event) {
+        if (options.noEvents) 
+          return;
+        element.trigger(event);
       }
 
-      function changeChecked($input, newState){
-        var oldState = $input.is(":checked")
+      function changeChecked($input, newState) {
+        var oldState = $input.is(":checked");
         $input.attr("checked", newState);
-        if(oldState != newState) trigger($input, 'change')
+        if (oldState != newState) 
+          optionallyTrigger($input, 'change');
       }
 
-      options = options || {}
+      options = options || {};
       var data = {};
+      var boolData = {};
       var parts = s.split("&");
+
       for (var i = 0; i < parts.length; i++) {
-        var pair = $.map(parts[i].replace(/\+/g, '%20').split("="), function(d){ 
+        var pair = $.map(parts[i].replace(/\+/g, '%20').split("="), function(d) {
           return decodeURIComponent(d); 
         });
+
+        //collect data raw (traditional checkbox handling) an boolean (for checkboxesAsBools option)
         data[pair[0]] = pair[1];
+        if (pair[1] == 'true') boolData[pair[0]] = true;
+        if (pair[1] == 'false') boolData[pair[0]] = false;
 
-        var $input = $("[name='" + pair[0] + "']", this)
-        var type = $input.attr('type')
+        var $input = $("[name='" + pair[0] + "']", this);
+        var type = $input.attr('type');
 
-        if(type == 'radio'){
-          $input = $input.filter("[value='" + pair[1] + "']")
-          changeChecked($input, true)
-        } else if(type == 'checkbox') { // see below
+        if (type == 'radio') {
+          $input = $input.filter("[value='" + pair[1] + "']");
+          changeChecked($input, true);
+        } else if (type == 'checkbox') { 
+          // see below
         } else {
-          var oldVal = $input.val()
-          var newVal = pair[1]
+          var oldVal = $input.val();
+          var newVal = pair[1];
           $input.val(newVal);
-          if(oldVal != newVal)trigger($input, 'change')
+          if (oldVal != newVal) 
+            optionallyTrigger($input, 'change');
         }
       }
 
-      // checkboxes are not serialized -> missing means unchecked
       $("input[type=checkbox]", this).each(function() {
-        var $input = $(this)
-        changeChecked($input, ($input.attr("name") in data))
+        var $input = $(this);
+        if (options.checkboxesAsBools) {
+          //checkboxes are serialized as non-standard true/false, so only change value if provided in data.
+          // (like other fields - unspecified fields are unchanged)
+          if ($(this).attr("name") in boolData)
+            changeChecked($input, boolData[$(this).attr("name")]);
+        }
+        else {
+          //standard serialization, so checkboxes are not serialized -> ANY missing value means unchecked 
+          // (no difference betwen "missing" and "false").
+          changeChecked($input, ($input.attr("name") in data));
+        }
       });
     };
 })(jQuery);
