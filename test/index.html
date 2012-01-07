@@ -89,6 +89,29 @@
             });
 
 
+            module("checkboxesAsBools option");
+            test("checkbox is not changed on missing value, if checkboxesAsBools set", 1, function() {
+              $("#demo1").deserialize("user[is_admin]=");
+              $("#demo1").deserialize("othervalue=", {checkboxesAsBools: true});
+              equal($("#user_is_admin").is(":checked"), true, "user_is_admin (checkbox)");
+            });
+            test("checkbox is unset on false value, if checkboxesAsBools set", 1, function() {
+              $("#demo1").deserialize("user[is_admin]=");
+              $("#demo1").deserialize("user[is_admin]=false", {checkboxesAsBools: true});
+              equal($("#user_is_admin").is(":checked"), false, "user_is_admin (checkbox)");
+            });
+            test("checkbox is set on true value, if checkboxesAsBools set", 1, function() {
+              $("#demo1").deserialize("nothinghere");
+              $("#demo1").deserialize("user[is_admin]=true", {checkboxesAsBools: true});
+              equal($("#user_is_admin").is(":checked"), true, "user_is_admin (checkbox)");
+            });
+            test("checkbox is not changed on invalid value, if checkboxesAsBools set", 1, function() {
+              $("#demo1").deserialize("user[is_admin]=");
+              $("#demo1").deserialize("user[is_admin]=nonsense", {checkboxesAsBools: true});
+              equal($("#user_is_admin").is(":checked"), true, "user_is_admin (checkbox)");
+            });
+
+
             module("All in one go");
             test("All in one go", 7, function() {
                 $("#demo1").deserialize(test_input);
