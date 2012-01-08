@@ -11,45 +11,52 @@
 **/
 (function($) {
     $.fn.deserialize = function(s, options) {
-      function trigger(element,event){
-        if(options.noEvents)return
-        element.trigger(event)
+
+      function optionallyTrigger(element,event) {
+        if (options.noEvents) 
+          return;
+        element.trigger(event);
       }
 
-      function changeChecked($input, newState){
-        var oldState = $input.is(":checked")
+      function changeChecked($input, newState) {
+        var oldState = $input.is(":checked");
         $input.attr("checked", newState);
-        if(oldState != newState) trigger($input, 'change')
+        if (oldState != newState) 
+          optionallyTrigger($input, 'change');
       }
 
-      options = options || {}
+      options = options || {};
       var data = {};
       var parts = s.split("&");
+
       for (var i = 0; i < parts.length; i++) {
-        var pair = $.map(parts[i].replace(/\+/g, '%20').split("="), function(d){ 
+        var pair = $.map(parts[i].replace(/\+/g, '%20').split("="), function(d) {
           return decodeURIComponent(d); 
         });
+
         data[pair[0]] = pair[1];
 
-        var $input = $("[name='" + pair[0] + "']", this)
-        var type = $input.attr('type')
+        var $input = $("[name='" + pair[0] + "']", this);
+        var type = $input.attr('type');
 
-        if(type == 'radio'){
-          $input = $input.filter("[value='" + pair[1] + "']")
-          changeChecked($input, true)
-        } else if(type == 'checkbox') { // see below
+        if (type == 'radio') {
+          $input = $input.filter("[value='" + pair[1] + "']");
+          changeChecked($input, true);
+        } else if (type == 'checkbox') { 
+          // see below
         } else {
-          var oldVal = $input.val()
-          var newVal = pair[1]
+          var oldVal = $input.val();
+          var newVal = pair[1];
           $input.val(newVal);
-          if(oldVal != newVal)trigger($input, 'change')
+          if (oldVal != newVal) 
+            optionallyTrigger($input, 'change');
         }
       }
 
       // checkboxes are not serialized -> missing means unchecked
       $("input[type=checkbox]", this).each(function() {
-        var $input = $(this)
-        changeChecked($input, ($input.attr("name") in data))
+        var $input = $(this);
+        changeChecked($input, ($input.attr("name") in data));
       });
     };
 })(jQuery);
