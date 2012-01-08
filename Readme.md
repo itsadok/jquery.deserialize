@@ -10,5 +10,8 @@ In contrary to some other plugins available it doesn't reinvent the wheel (by ut
     // do not trigger change events
     $("#form-id").deserialize(string, {noEvents: true});
 
+    // expect "true" and "false" values for checkboxes instead of presence/absence of field (see https://gist.github.com/1572512).
+    $("#form-id").deserialize(string, {checkboxesAsBools: true});
+
 # Demo
 For examples please see demo.html
