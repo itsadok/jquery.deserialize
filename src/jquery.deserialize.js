@@ -8,10 +8,12 @@
  *
  * do not trigger change events on elements
  * $("form").deserialize(string, {noEvents: true});
+ *
+ * expect checkboxes to be serialized as boolean (true/false) rather than standard (present/missing)
+ * $("form").deserialize(string, {checkboxesAsBools: true});
 **/
 (function($) {
     $.fn.deserialize = function(s, options) {
-
       function optionallyTrigger(element,event) {
         if (options.noEvents) 
           return;
@@ -34,6 +36,7 @@
           return decodeURIComponent(d); 
         });
 
+        //collect data for checkbox handling
         data[pair[0]] = pair[1];
 
         var $input = $("[name='" + pair[0] + "']", this);
@@ -53,10 +56,21 @@
         }
       }
 
-      // checkboxes are not serialized -> missing means unchecked
       $("input[type=checkbox]", this).each(function() {
         var $input = $(this);
-        changeChecked($input, ($input.attr("name") in data));
+        if (options.checkboxesAsBools) {
+          //checkboxes are serialized as non-standard true/false, so only change value if provided (as explicit 
+          // boolean) in the data. (so checkboxes behave like other fields - unspecified fields are unchanged)
+          if (data[pair[0]] == 'true')
+            changeChecked($input, true);
+          else if (data[pair[0]] == 'false')
+            changeChecked($input, false);
+        }
+        else {
+          //standard serialization, so checkboxes are not serialized -> ANY missing value means unchecked 
+          // (no difference betwen "missing" and "false").
+          changeChecked($input, ($input.attr("name") in data));
+        }
       });
     };
 })(jQuery);
