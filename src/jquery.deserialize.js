@@ -29,7 +29,6 @@
 
       options = options || {};
       var data = {};
-      var boolData = {};
       var parts = s.split("&");
 
       for (var i = 0; i < parts.length; i++) {
@@ -37,10 +36,8 @@
           return decodeURIComponent(d); 
         });
 
-        //collect data raw (traditional checkbox handling) an boolean (for checkboxesAsBools option)
+        //collect data for checkbox handling
         data[pair[0]] = pair[1];
-        if (pair[1] == 'true') boolData[pair[0]] = true;
-        if (pair[1] == 'false') boolData[pair[0]] = false;
 
         var $input = $("[name='" + pair[0] + "']", this);
         var type = $input.attr('type');
@@ -62,10 +59,12 @@
       $("input[type=checkbox]", this).each(function() {
         var $input = $(this);
         if (options.checkboxesAsBools) {
-          //checkboxes are serialized as non-standard true/false, so only change value if provided in data.
-          // (like other fields - unspecified fields are unchanged)
-          if ($(this).attr("name") in boolData)
-            changeChecked($input, boolData[$(this).attr("name")]);
+          //checkboxes are serialized as non-standard true/false, so only change value if provided (as explicit 
+          // boolean) in the data. (so checkboxes behave like other fields - unspecified fields are unchanged)
+          if (data[pair[0]] == 'true')
+            changeChecked($input, true);
+          else if (data[pair[0]] == 'false')
+            changeChecked($input, false);
         }
         else {
           //standard serialization, so checkboxes are not serialized -> ANY missing value means unchecked 
