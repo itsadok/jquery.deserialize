@@ -57,13 +57,14 @@
       }
 
       $("input[type=checkbox]", this).each(function() {
+        var $name = this["name"];
         var $input = $(this);
         if (options.checkboxesAsBools) {
           //checkboxes are serialized as non-standard true/false, so only change value if provided (as explicit 
           // boolean) in the data. (so checkboxes behave like other fields - unspecified fields are unchanged)
-          if (data[pair[0]] == 'true')
+          if (data[$name] == 'true')
             changeChecked($input, true);
-          else if (data[pair[0]] == 'false')
+          else if (data[$name] == 'false')
             changeChecked($input, false);
         }
         else {
